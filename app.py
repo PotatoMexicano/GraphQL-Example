@@ -13,8 +13,11 @@ schema = strawberry.Schema(query=Query)
 
 @app.route("/graphql", methods=["POST"])
 def graphql():
-    print(request.get_data())
-    result = GraphQL(schema).encode_json(request.get_data())
+    
+    query = request.form.get('query')
+
+    result = schema.execute_sync(query=query)
+
     return jsonify(result)
 
 @app.route("/", methods=["GET"])
