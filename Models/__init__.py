@@ -35,9 +35,9 @@ class User(Base):
 @strawberry.type
 class Query:
     @strawberry.field
-    def selectAll(self) -> list[User]:
+    async def selectAll(self) -> list[User]:
         return User.selectAll()
     
     @strawberry.field
-    def selectOne(self, id:int) -> Optional[User]:
+    async def selectOne(self, id:int) -> Optional[User]:
         return User.select(id=id)

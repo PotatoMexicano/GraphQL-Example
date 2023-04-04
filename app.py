@@ -1,28 +1,16 @@
+import uvicorn
 import strawberry
 from Models import Query
-from strawberry.asgi import GraphQL
-from strawberry.flask import graphiql
-
-from flask import Flask, jsonify, request, render_template
-from strawberry.flask.views import GraphQLView
-# from strawberry.flask.views import AsyncGraphQLView
-
-app = Flask(__name__, template_folder='Templates')
+from fastapi import FastAPI
+from strawberry.fastapi import GraphQLRouter
 
 schema = strawberry.Schema(query=Query)
 
-@app.route("/graphql", methods=["POST"])
-def graphql():
-    
-    query = request.form.get('query')
 
-    result = schema.execute_sync(query=query)
+graphql_app = GraphQLRouter(schema)
+app = FastAPI()
 
-    return jsonify(result)
-
-@app.route("/", methods=["GET"])
-def home():
-    return render_template('index.html')
+app.include_router(graphql_app, prefix="/graphql")
 
 if __name__ == "__main__":
-    app.run(port=8000, host='0.0.0.0', debug=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
